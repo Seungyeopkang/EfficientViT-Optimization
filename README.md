@@ -13,10 +13,7 @@ FFN(Feed-Forward Network)을 어텐션 레이어 앞뒤로 배치하여 네트�
 ### 2. Cascaded Group Attention (CGA)
 입력 특징을 여러 헤드로 분할하고 순차적(cascaded)으로 처리하는 새로운 어텐션 메커니즘입니다. 각 헤드가 이전 헤드의 출력을 활용함으로써, 계산 비용을 크게 낮으면서도 풍부하고 다양한 특징을 학습할 수 있습니다.
 
-### 3. Flash Attention 통합
-훈련 및 추론 속도를 높이기 위해 Flash Attention을 통합했습니다. GPU 메모리 읽기/쓰기 효율을 최적화하여 연산 속도를 개선했습니다.
-
-### 4. 파라미터 재할당
+### 3. 파라미터 재할당
 Query(Q)와 Key(K)의 차원을 전략적으로 축소하여 어텐션 연산 시 메모리 점유율을 최소화했습니다.
 
 ## 주요 결과
@@ -26,11 +23,11 @@ EfficientViT는 MobileNetV2 및 표준 ViT와 비교했을 때 성능(Accuracy)�
 ![Accuracy vs Latency](figure/accuracy_vs_latency.png)
 *CIFAR-10 데이터셋에서의 지연 시간 대비 정확도 개선 결과*
 
-### 훈련 및 평가
-Flash Attention 적용과 아키텍처 최적화를 통해 훈련 시간과 리소스 사용량을 대폭 절감했습니다.
+### Flash Attention 통합 및 비교
+훈련 및 추론 시의 효율을 개선하기 위해 Flash Attention을 통합했습니다. 아래는 표준 어텐션과 Flash Attention의 지연 시간 비교 결과입니다.
 
-![Training Time Comparison](figure/training_time_comparison_v2.png)
-*다양한 설정에 따른 훈련 시간 비교*
+![Flash Attention Comparison](figure/flash_attn_comparison.png)
+*표준 어텐션 대비 Flash Attention의 효율성 비교*
 
 ## 시작하기
 
