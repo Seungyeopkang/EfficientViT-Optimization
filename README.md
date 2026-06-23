@@ -1,69 +1,69 @@
-# EfficientViT: Cascaded Group Attention을 활용한 메모리 효율적인 Vision Transformer
+# EfficientViT: Memory Efficient Vision Transformer with Cascaded Group Attention
 
-이 프로젝트는 모바일 및 엣지 디바이스에서의 실시간 배포를 위해 최적화된 고속 Vision Transformer 아키텍처인 **EfficientViT**를 구현합니다. 기존 ViT의 높은 메모리 액세스 비용과 지연 시간 문제를 해결하여, 성능 저하 없이 효율성을 극대화했습니다.
+This project implements **EfficientViT**, a high-speed Vision Transformer architecture optimized for real-time deployment on mobile and edge devices. It resolves the high memory access cost and latency issues of existing ViTs, maximizing efficiency without compromising performance.
 
 > [!NOTE]
-> 본 프로젝트의 실험은 빠른 반복 연구와 검증을 위해 **CIFAR-10** 데이터셋을 기본으로 진행되었습니다.
+> The experiments in this project were primarily conducted on the **CIFAR-10** dataset for rapid iterative research and validation.
 
-## 핵심 방법론
+## Core Methodology
 
 ### 1. Sandwich Layout
-FFN(Feed-Forward Network)을 어텐션 레이어 앞뒤로 배치하여 네트워크 구조를 최적화했습니다. 이를 통해 메모리 접근 오버헤드를 줄이고 네트워크 내 정보 흐름을 강화했습니다.
+The network structure was optimized by placing FFNs (Feed-Forward Networks) before and after the attention layers. This reduces memory access overhead and enhances information flow within the network.
 
 ### 2. Cascaded Group Attention (CGA)
-입력 특징을 여러 헤드로 분할하고 순차적(cascaded)으로 처리하는 새로운 어텐션 메커니즘입니다. 각 헤드가 이전 헤드의 출력을 활용함으로써, 계산 비용을 크게 낮으면서도 풍부하고 다양한 특징을 학습할 수 있습니다.
+A novel attention mechanism that splits input features into multiple heads and processes them sequentially (cascaded). By allowing each head to utilize the output of the previous head, it significantly lowers computational costs while learning rich and diverse features.
 
-### 3. 파라미터 재할당
-Query(Q)와 Key(K)의 차원을 전략적으로 축소하여 어텐션 연산 시 메모리 점유율을 최소화했습니다.
+### 3. Parameter Reallocation
+The dimensions of Query (Q) and Key (K) were strategically reduced to minimize memory footprint during attention operations.
 
-## 주요 결과
+## Key Results
 
-EfficientViT는 MobileNetV2 및 표준 ViT와 비교했을 때 성능(Accuracy)과 처리량(Throughput) 간의 우수한 트레이드오프를 보여줍니다.
+EfficientViT demonstrates an excellent tradeoff between Accuracy and Throughput compared to MobileNetV2 and standard ViTs.
 
 ![Accuracy vs Latency](figure/accuracy_vs_latency.png)
-*CIFAR-10 데이터셋에서의 지연 시간 대비 정확도 개선 결과*
+*Improvement in accuracy vs. latency on the CIFAR-10 dataset*
 
-### Flash Attention 통합 및 비교
-훈련 및 추론 시의 효율을 개선하기 위해 Flash Attention을 통합했습니다. 아래는 표준 어텐션과 Flash Attention의 지연 시간 비교 결과입니다.
+### Flash Attention Integration & Comparison
+Flash Attention was integrated to improve efficiency during training and inference. Below is the latency comparison between standard attention and Flash Attention.
 
 ![Flash Attention Comparison](figure/flash_attn_comparison.png)
-*표준 어텐션 대비 Flash Attention의 효율성 비교*
+*Efficiency comparison of Flash Attention vs. standard attention*
 
-## 시작하기
+## Getting Started
 
-### 환경 설정
+### Environment Setup
 ```bash
 pip install -r requirements.txt
 ```
 
-### 데이터 준비
-CIFAR-10 데이터를 준비하거나 기본 스크립트를 사용하여 다운로드하세요. (ImageNet 구조도 지원합니다)
+### Data Preparation
+Prepare the CIFAR-10 data or use the default script to download it. (ImageNet structure is also supported)
 ```bash
-# CIFAR-10 예시
+# CIFAR-10 Example
 data/
 └── cifar-10-batches-py/
 ```
 
-### 모델 평가
-사전 훈련된 모델(예: EfficientViT-M4)을 평가하려면:
+### Model Evaluation
+To evaluate a pre-trained model (e.g., EfficientViT-M4):
 ```bash
 python main.py --eval --model EfficientViT_M4 --resume ./efficientvit_m4.pth --data-path $PATH_TO_CIFAR10
 ```
 
-### 모델 훈련
-EfficientViT-M4를 훈련하려면:
+### Model Training
+To train EfficientViT-M4:
 ```bash
 python main.py --model EfficientViT_M4 --data-path $PATH_TO_CIFAR10 --dist-eval
 ```
 
-## 벤치마크 및 검증
-검증 스크립트와 벤치마킹 툴은 `benchmarks/` 디렉토리에 위치해 있습니다:
-- `speed_test.py`: GPU/CPU 환경에서의 처리량 비교
-- `verify_flash_attn.py`: Flash Attention 통합 여부 확인
-- `benchmark_stages.py`: 모델 단계별 지연 시간 프로파일링
+## Benchmark and Verification
+Validation scripts and benchmarking tools are located in the `benchmarks/` directory:
+- `speed_test.py`: Throughput comparison on GPU/CPU environments
+- `verify_flash_attn.py`: Verification of Flash Attention integration
+- `benchmark_stages.py`: Stage-by-stage latency profiling of the model
 
-## 참고 및 감사
-[Swin Transformer](https://github.com/microsoft/swin-transformer), [LeViT](https://github.com/facebookresearch/LeViT), [pytorch-image-models](https://github.com/rwightman/pytorch-image-models), [PyTorch](https://github.com/pytorch/pytorch)의 오픈소스 코드베이스에 감사드립니다.
+## Acknowledgement
+Thanks to the open-source codebases of [Swin Transformer](https://github.com/microsoft/swin-transformer), [LeViT](https://github.com/facebookresearch/LeViT), [pytorch-image-models](https://github.com/rwightman/pytorch-image-models), and [PyTorch](https://github.com/pytorch/pytorch).
 
-## 라이선스
-이 프로젝트는 [MIT License](./LICENSE)를 따릅니다.
+## License
+This project is licensed under the [MIT License](./LICENSE).
